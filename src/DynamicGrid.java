@@ -20,14 +20,19 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                cells[i][j] = new JLabel();
-                add(cells[i][j]);
+                JLabel cell = new JLabel();
+                cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                cells[i][j] = cell;
+                cells[i][j].setVisible(true);
+                cells[i][j].setOpaque(true);
+                add(cell);
             }
         }
+        repaint();
     }
 
-    public DynamicGrid() {
-        setGridSize(10,10);
+    public DynamicGrid(int rows, int cols) {
+        setGridSize(rows, cols);
     }
 
 
