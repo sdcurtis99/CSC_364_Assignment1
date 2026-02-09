@@ -1,5 +1,3 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -19,6 +17,16 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
     private boolean paused = false;
     private boolean finished = false;
 
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+    public void addPropertyChangeListener(PropertyChangeListener listner) {
+        pcs.addPropertyChangeListener(listner);
+    }
+
+    private void notifyChange() {
+        pcs.firePropertyChange("grid", null, null);
+    }
+
     // enum for the different types of cells
     enum CellType {
         EMPTY,
@@ -33,6 +41,7 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
     public DynamicGrid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
+        setLayout(new GridLayout(rows, cols));
         grid = new CellType[rows][cols];
         labels = new JLabel[rows][cols];
         initGrid();
@@ -54,10 +63,38 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
         }
     }
 
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    // Assign each enum with a specfic color
+    private Color colorFor(CellType type) {
+        switch(type) {
+            case START:
+                return Color.GREEN;
+            case END:
+                return Color.YELLOW;
+            case OBSTACLE:
+                return Color.BLACK;
+            case FRONTIER:
+                return Color.PINK;
+            case VISITED:
+                return Color.BLUE;
+            case PATH:
+                return Color.ORANGE;
+            default:
+                return Color.WHITE;
+        }
+    }
 
-    private void notifyChange() {pcs.firePropertyChange("grid", null, null);}
+    private void refreshView() {
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    labels[r][c].setBackground(colorFor(grid[r][c]));
+                }
+            }
+        }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
+    }
 
     public void setRunning (boolean state) {
         this.running = state;
@@ -81,12 +118,6 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
 
     public boolean getFinished() {
         return this.finished;
-    }
-
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-
     }
 
 
