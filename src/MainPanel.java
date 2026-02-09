@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class MainPanel {
+public class MainPanel implements PropertyChangeListener {
 
     private JFrame frame;
     private GridHouse gridHouse;
@@ -19,6 +21,7 @@ public class MainPanel {
 
 
         toolBar = new ToolBar(grid);
+        toolBar.addPropertyChangeListener(this);
 
         gridHouse = new GridHouse();
 
@@ -34,5 +37,21 @@ public class MainPanel {
 
     public static void main(String[] args) {
         MainPanel mainWindow = new MainPanel();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if ("resize".equals(event.getPropertyName())) {
+            int newSize = (int) event.getNewValue();
+            gridHouse.remove(grid);
+            grid = new DynamicGridModel(newSize, newSize);
+            grid.setPreferredSize(new Dimension(400, 400));
+            gridHouse.add(grid);
+
+            // redo the layout since it has changed then repaint it
+            gridHouse.revalidate();
+            gridHouse.repaint();
+        }
+        return;
     }
 }
