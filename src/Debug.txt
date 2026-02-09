@@ -4,3 +4,5 @@ Upon reset pathing algorithm continues to keep searching, but start end, and the
 Dont allow path finding algortihm to run while start and end are null,
 Pause is non-functional
 Sleep should be dyanmic based on grid size so that the speed of which the path is explored is appropiate to the size of the grid
+
+All swing events, Ie Mouse Actions, Buttons, Etc should be threaded for improved performance.
