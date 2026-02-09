@@ -1,31 +1,17 @@
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+
 public class BFS implements Runnable {
 
-    private int numRows;
-    private int numCols;
-
-    private Point start;
-    private Point goal;
-    private List<Point> blockedCells;
-
+    private DynamicGridModel model;
     private List<Point> resultPath;
-
     private volatile boolean running = true;
 
-    public BFS(int numRows, int numCols) {
-        this.numRows = numRows;
-        this.numCols = numCols;
-    }
-
-    public void setData(Point start, Point goal, List<Point> blockedCells) {
-        this.start = start;
-        this.goal = goal;
-        this.blockedCells = blockedCells;
+    public BFS(DynamicGridModel model) {
+        this.model = model;
     }
 
     public void stop() {
@@ -38,67 +24,85 @@ public class BFS implements Runnable {
 
     @Override
     public void run() {
-        resultPath = findPath(start, goal, blockedCells);
+
+        Point start = model.getStart();
+        Point goal = model.getEnd();
+        int rows = model.getRows();
+        int cols = model.getCols();
+
+        if (start == null || goal == null) {
+            resultPath = new ArrayList<>();
+            return;
+        }
+
+        model.clearSearchMarks();
+        resultPath = findPath(start, goal, rows, cols);
     }
 
-    public List<Point> findPath(Point start, Point goal, List<Point> blockedCells) {
+    public List<Point> findPath(Point start, Point goal, int rows, int cols) {
 
-        boolean[][] visited = new boolean[numRows][numCols];
-        Point[][] cameFrom = new Point[numRows][numCols];
+        boolean[][] visited = new boolean[rows][cols];
+        Point[][] cameFrom = new Point[rows][cols];
 
         Queue<Point> openQueue = new LinkedList<>();
         openQueue.add(start);
-        visited[start.x][start.y] = true;
+        visited[start.y][start.x] = true;
+        model.markFrontier(start);
 
         while (!openQueue.isEmpty() && running) {
 
             Point currentCell = openQueue.poll();
+            model.markVisited(currentCell);
 
             if (currentCell.equals(goal)) {
-                return buildPath(cameFrom, start, goal);
+                List<Point> path = buildPath(cameFrom, start, goal);
+                model.markPath(path);
+                return path;
             }
 
-            int row = currentCell.x;
-            int col = currentCell.y;
+            int row = currentCell.y;
+            int col = currentCell.x;
 
-            if (isValidCell(row - 1, col, visited, blockedCells)) {
+            if (isValidCell(row - 1, col, visited, rows, cols)) {
                 visited[row - 1][col] = true;
                 cameFrom[row - 1][col] = currentCell;
-                openQueue.add(new Point(row - 1, col));
+                Point next = new Point(col, row - 1);
+                openQueue.add(next);
+                model.markFrontier(next);
             }
 
-            if (isValidCell(row + 1, col, visited, blockedCells)) {
+            if (isValidCell(row + 1, col, visited, rows, cols)) {
                 visited[row + 1][col] = true;
                 cameFrom[row + 1][col] = currentCell;
-                openQueue.add(new Point(row + 1, col));
+                Point next = new Point(col, row + 1);
+                openQueue.add(next);
+                model.markFrontier(next);
             }
 
-            if (isValidCell(row, col - 1, visited, blockedCells)) {
+            if (isValidCell(row, col - 1, visited, rows, cols)) {
                 visited[row][col - 1] = true;
                 cameFrom[row][col - 1] = currentCell;
-                openQueue.add(new Point(row, col - 1));
+                Point next = new Point(col - 1, row);
+                openQueue.add(next);
+                model.markFrontier(next);
             }
 
-            if (isValidCell(row, col + 1, visited, blockedCells)) {
+            if (isValidCell(row, col + 1, visited, rows, cols)) {
                 visited[row][col + 1] = true;
                 cameFrom[row][col + 1] = currentCell;
-                openQueue.add(new Point(row, col + 1));
+                Point next = new Point(col + 1, row);
+                openQueue.add(next);
+                model.markFrontier(next);
             }
         }
 
         return new ArrayList<>();
     }
 
-    private boolean isValidCell(int row, int col, boolean[][] visited, List<Point> blockedCells) {
-
-        if (row < 0 || row >= numRows || col < 0 || col >= numCols) return false;
+    private boolean isValidCell(int row, int col, boolean[][] visited, int rows, int cols) {
+        if (row < 0 || row >= rows || col < 0 || col >= cols) return false;
         if (visited[row][col]) return false;
-
-        for (Point p : blockedCells) {
-            if (p.x == row && p.y == col) return false;
-        }
-
-        return true;
+        return model.getCell(row, col) != DynamicGridModel.CellType.OBSTACLE;
     }
 
     private List<Point> buildPath(Point[][] cameFrom, Point start, Point goal) {
@@ -109,7 +113,8 @@ public class BFS implements Runnable {
         while (true) {
             path.add(0, current);
             if (current.equals(start)) break;
-            current = cameFrom[current.x][current.y];
+            current = cameFrom[current.y][current.x];
+            if (current == null) return new ArrayList<>();
         }
 
         return path;
