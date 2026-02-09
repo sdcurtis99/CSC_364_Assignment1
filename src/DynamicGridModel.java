@@ -24,6 +24,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         setLayout(new GridLayout(rows, cols));
         grid = new CellType[rows][cols];
         labels = new JLabel[rows][cols];
+        addPropertyChangeListener(this);
         initGrid();
     }
 
@@ -75,6 +76,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         return grid[r][c];
     }
 
+
     // Let's out Grid alert that something has changed, creates an object that keeps a list of
     // listeners and notifies them when something has changed ie there is new data to get from the blackboard
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -84,39 +86,71 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     public void addPropertyChangeListener(PropertyChangeListener listner) {
         pcs.addPropertyChangeListener(listner);
     }
-
-    // Method that is called to begin the chain of events of alerting the listerns
-    // Will get called in the grids logic updates
-    private void notifyChange() {
-        pcs.firePropertyChange("grid", null, null);
-        refreshView();
-    }
-
     // When there is a change we must refresh our grid.
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         SwingUtilities.invokeLater(this::refreshView);
     }
 
+
+    // Method that is called to begin the chain of events of alerting the listerns
+    // Will get called in the grids logic updates
+    private void notifyChange() {
+        pcs.firePropertyChange("grid", null, null);
+    }
+
+
+
     @Override
     public void mouseClicked(MouseEvent e) {
         JLabel label = (JLabel) e.getSource();
         int r = (int) label.getClientProperty("row");
         int c = (int) label.getClientProperty("col");
-        switch(e.getClickCount()) {
-            case 1:
-                setStart(r, c);
-                System.out.println("1");
-                break;
-            case 2:
-                setEnd(r, c);
-                System.out.println("2");
-                break;
-            case 3:
-                toggleObstacle(r, c);
-                System.out.println("3");
-                break;
+
+        CellType cell = grid[r][c];
+
+        // If clicking START again -> clear it
+        if (cell == CellType.START) {
+            grid[r][c] = CellType.EMPTY;
+            start = null;
+            notifyChange();
+            return;
         }
+
+        // If clicking END again -> clear it
+        if (cell == CellType.END) {
+            grid[r][c] = CellType.EMPTY;
+            end = null;
+            notifyChange();
+            return;
+        }
+
+        // First click sets START
+        if (start == null) {
+            clearCell(CellType.START);
+            start = new Point(c, r);
+            grid[r][c] = CellType.START;
+            notifyChange();
+            return;
+        }
+
+        // Second click sets END
+        if (end == null) {
+            clearCell(CellType.END);
+            end = new Point(c, r);
+            grid[r][c] = CellType.END;
+            notifyChange();
+            return;
+        }
+
+        // Any other click toggles OBSTACLE
+        if (cell == CellType.EMPTY) {
+            grid[r][c] = CellType.OBSTACLE;
+        } else if (cell == CellType.OBSTACLE) {
+            grid[r][c] = CellType.EMPTY;
+        }
+
+        notifyChange();
     }
 
     @Override
@@ -141,13 +175,13 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
 
     // enum for the different types of cells
     enum CellType {
-        EMPTY,
-        START,
-        END,
-        OBSTACLE,
-        FRONTIER,
-        VISITED,
-        PATH
+        EMPTY, // WHITE
+        START, // GREEN
+        END, // YELLOW
+        OBSTACLE, // BLACK
+        FRONTIER, //PINK
+        VISITED, //BLUE
+        PATH // ORANGE
     }
 
     private void initGrid() {
@@ -208,6 +242,9 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     }
 
     public synchronized void toggleObstacle(int r, int c) {
+        if (grid[r][c] == CellType.START || grid[r][c] == CellType.END) {
+            return;
+        }
         if (grid[r][c] == CellType.EMPTY) {grid[r][c] = CellType.OBSTACLE;}
         else if (grid[r][c] == CellType.OBSTACLE) {grid[r][c] = CellType.EMPTY;}
         notifyChange();
@@ -231,8 +268,9 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     }
 
     public void startPathFinding () {
-        Thread bfs = new Thread();
-        bfs.start();
+        BFS bfsPath = new BFS(this);
+        Thread bfsThread = new Thread(bfsPath);
+        bfsThread.start();
     }
 
     // Clear the algorithms setup, leave users choices in palace
