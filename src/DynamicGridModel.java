@@ -5,7 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
-public class DynamicGrid extends JPanel implements PropertyChangeListener{
+public class DynamicGridModel extends JPanel implements PropertyChangeListener{
 
     // The grid represents the logical state of the array
     // The labels are responsible for depicting what each cell represents
@@ -51,7 +51,7 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
         PATH
     }
 
-    public DynamicGrid(int rows, int cols) {
+    public DynamicGridModel(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         setLayout(new GridLayout(rows, cols));
@@ -147,6 +147,17 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
             if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.END) {grid[p.y][p.x] = CellType.PATH;}
         }
         notifyChange();
+    }
+
+    // Clear the algorithms setup, leave users choices in palace
+    public synchronized void clearSearchMarks() {
+        for (int r = 0; r < rows; r++) {
+            for (int c  = 0; c < cols; c++) {
+                if(grid[r][c] == CellType.FRONTIER || grid[r][c] == CellType.PATH || grid[r][c] == CellType.VISITED) {
+                    grid[r][c] = CellType.EMPTY;
+                }
+            }
+        }
     }
 
 
