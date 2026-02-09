@@ -49,11 +49,11 @@ public class BFS implements Runnable {
         model.markFrontier(start);
 
         while (!openQueue.isEmpty() && running) {
-            sleep(300);
+            sleep(100);
             Point currentCell = openQueue.poll();
             model.markVisited(currentCell);
 
-            if (currentCell.equals(goal)) {
+            if (currentCell.x == goal.x && currentCell.y == goal.y) {
                 List<Point> path = buildPath(cameFrom, start, goal);
                 model.markPath(path);
                 return path;
@@ -113,7 +113,7 @@ public class BFS implements Runnable {
 
         while (true) {
             path.add(0, current);
-            sleep(300);
+            sleep(100);
             if (current.equals(start)) break;
             current = cameFrom[current.y][current.x];
             if (current == null) return new ArrayList<>();

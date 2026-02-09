@@ -76,6 +76,9 @@ public class ToolBar extends JPanel implements ActionListener {
                 break;
         }
     }
+    public void setGrid(DynamicGridModel newGrid) {
+        this.grid = newGrid;
+    }
 
 }
 

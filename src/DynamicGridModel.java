@@ -3,6 +3,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -97,6 +98,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     // Will get called in the grids logic updates
     private void notifyChange() {
         pcs.firePropertyChange("grid", null, null);
+        refreshView();
     }
 
 
@@ -205,7 +207,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
 
     // Assign each enum with a specfic color
     private Color colorFor(CellType type) {
-        switch(type) {
+        switch (type) {
             case START:
                 return Color.GREEN;
             case END:
@@ -224,12 +226,12 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     }
 
     private void refreshView() {
-            for (int r = 0; r < rows; r++) {
-                for (int c = 0; c < cols; c++) {
-                    labels[r][c].setBackground(colorFor(grid[r][c]));
-                }
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                labels[r][c].setBackground(colorFor(grid[r][c]));
             }
         }
+    }
 
     private void clearCell(CellType type) {
         for (int r = 0; r < rows; r++) {
@@ -245,24 +247,33 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         if (grid[r][c] == CellType.START || grid[r][c] == CellType.END) {
             return;
         }
-        if (grid[r][c] == CellType.EMPTY) {grid[r][c] = CellType.OBSTACLE;}
-        else if (grid[r][c] == CellType.OBSTACLE) {grid[r][c] = CellType.EMPTY;}
+        if (grid[r][c] == CellType.EMPTY) {
+            grid[r][c] = CellType.OBSTACLE;
+        } else if (grid[r][c] == CellType.OBSTACLE) {
+            grid[r][c] = CellType.EMPTY;
+        }
         notifyChange();
     }
 
     public synchronized void markFrontier(Point p) {
-        if (grid[p.y][p.x] == CellType.EMPTY) {grid[p.y][p.x] = CellType.FRONTIER;}
+        if (grid[p.y][p.x] == CellType.EMPTY) {
+            grid[p.y][p.x] = CellType.FRONTIER;
+        }
         notifyChange();
     }
 
-    public synchronized void markVisited (Point p) {
-        if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.END) {grid[p.y][p.x] = CellType.VISITED;}
+    public synchronized void markVisited(Point p) {
+        if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] != CellType.END) {
+            grid[p.y][p.x] = CellType.VISITED;
+        }
         notifyChange();
     }
 
     public synchronized void markPath(List<Point> path) {
-        for(Point p : path) {
-            if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.END) {grid[p.y][p.x] = CellType.PATH;}
+        for (Point p : path) {
+            if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] != CellType.END) {
+                grid[p.y][p.x] = CellType.PATH;
+            }
         }
         notifyChange();
     }
@@ -276,8 +287,8 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     // Clear the algorithms setup, leave users choices in palace
     public synchronized void clearSearchMarks() {
         for (int r = 0; r < rows; r++) {
-            for (int c  = 0; c < cols; c++) {
-                if(grid[r][c] == CellType.FRONTIER || grid[r][c] == CellType.PATH || grid[r][c] == CellType.VISITED) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == CellType.FRONTIER || grid[r][c] == CellType.PATH || grid[r][c] == CellType.VISITED) {
                     grid[r][c] = CellType.EMPTY;
                 }
             }
@@ -293,7 +304,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
             }
         }
         start = null;
-        end =  null;
+        end = null;
         notifyChange();
     }
 

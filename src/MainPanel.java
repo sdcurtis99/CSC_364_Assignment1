@@ -43,15 +43,18 @@ public class MainPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent event) {
         if ("resize".equals(event.getPropertyName())) {
             int newSize = (int) event.getNewValue();
+
             gridHouse.remove(grid);
+
             grid = new DynamicGridModel(newSize, newSize);
             grid.setPreferredSize(new Dimension(400, 400));
+
             gridHouse.add(grid);
 
-            // redo the layout since it has changed then repaint it
+            toolBar.setGrid(grid);
+
             gridHouse.revalidate();
             gridHouse.repaint();
         }
-        return;
     }
 }
