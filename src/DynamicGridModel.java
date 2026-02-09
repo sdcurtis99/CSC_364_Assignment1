@@ -89,12 +89,13 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     // Will get called in the grids logic updates
     private void notifyChange() {
         pcs.firePropertyChange("grid", null, null);
+        refreshView();
     }
 
     // When there is a change we must refresh our grid.
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        refreshView();
+        SwingUtilities.invokeLater(this::refreshView);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ToolBar extends JPanel implements ActionListener {
         this.grid = grid;
         JLabel gTitle = new JLabel("Grid Count:");
         Integer[] gridCounts = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100};
-       gridDropDown = new JComboBox<>(gridCounts);
+        gridDropDown = new JComboBox<>(gridCounts);
 
         startButton = new JButton("Start");
         resetButton = new JButton("Reset");
