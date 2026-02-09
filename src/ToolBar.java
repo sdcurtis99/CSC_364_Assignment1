@@ -8,17 +8,20 @@ public class ToolBar extends JPanel implements ActionListener {
 
     public ToolBar() {
         JLabel gTitle = new JLabel("Grid Count:");
-        Integer[] gridCounts = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100};
+        Integer[] gridCounts = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100};
         JComboBox<Integer> gridDropDown = new JComboBox<>(gridCounts);
         JButton startRadio =  new JButton("Start");
         JButton resetRadio =  new JButton("Reset");
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(startRadio);
         buttonGroup.add(resetRadio);
+        add(gTitle);
+        add(gridDropDown);
         add(startRadio);
         add(resetRadio);
         startRadio.addActionListener(this);
         resetRadio.addActionListener(this);
+        gridDropDown.addActionListener(this);
     }
 
     @Override
