@@ -3,7 +3,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-
 public class BFS implements Runnable {
 
     private DynamicGridModel model;
@@ -100,8 +99,10 @@ public class BFS implements Runnable {
     }
 
     private boolean isValidCell(int row, int col, boolean[][] visited, int rows, int cols) {
+
         if (row < 0 || row >= rows || col < 0 || col >= cols) return false;
         if (visited[row][col]) return false;
+
         return model.getCell(row, col) != DynamicGridModel.CellType.OBSTACLE;
     }
 
