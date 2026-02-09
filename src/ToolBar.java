@@ -27,6 +27,12 @@ public class ToolBar extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("temp");
+
+        // When Start is Clicked
+        // Create new thread which create an AStarObject taking Point of start, end, and obstacle
+
+
+        // When reset is clicked
     }
 
 
