@@ -1,18 +1,36 @@
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
 
 public class MainPanel {
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Assignment 1");
-        GridHouse gridHouse = new GridHouse();
-        DynamicGrid dynamicGrid = new DynamicGrid(10, 10);
-        ToolBar toolBar = new ToolBar();
 
-        frame.setSize(600, 400);
-        frame.add(gridHouse, BorderLayout.SOUTH);
+    private JFrame frame;
+    private GridHouse gridHouse;
+    private DynamicGridModel grid;
+    private ToolBar toolBar;
+
+    public MainPanel() {
+
+        frame = new JFrame("Concurrent Grid Pathfinder");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+
+        grid = new DynamicGridModel(10, 10);
+
+        toolBar = new ToolBar(grid);
+
+        gridHouse = new GridHouse();
+
         frame.add(toolBar, BorderLayout.NORTH);
-        frame.add(dynamicGrid, BorderLayout.CENTER);
+        frame.add(gridHouse, BorderLayout.SOUTH);
+        gridHouse.add(grid, BorderLayout.CENTER);
+
+        frame.setSize(800, 600);
         frame.setVisible(true);
+    }
+
+    // Do we need resize requests
+
+    public static void main(String[] args) {
+        MainPanel mainWindow = new MainPanel();
     }
 }

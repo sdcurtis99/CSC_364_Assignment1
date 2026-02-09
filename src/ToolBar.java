@@ -1,7 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import java.awt.*;
+
 
 
 public class ToolBar extends JPanel implements ActionListener {
@@ -41,13 +41,16 @@ public class ToolBar extends JPanel implements ActionListener {
         if (event.getSource() == gridDropDown) {
             Integer newSize = (Integer) gridDropDown.getSelectedItem();
             // Tell the rest of the program that a resize was requested
-            firePropertyChange("resize", null, newSize);
+            if (newSize != null) {
+                if (newSize != grid.getRows()) {
+                    firePropertyChange("resize", null, newSize);
+                }
+            }
             return;
         }
 
         // getActionCommand returns the text for buttons
         switch (event.getActionCommand()) {
-
             case "Start":
                 grid.clearSearchMarks();
                 // BFS thread will be started here later
@@ -73,13 +76,5 @@ public class ToolBar extends JPanel implements ActionListener {
         }
     }
 
-        // When Start is Clicked
-        // Create new thread which create an AStarObject taking Point of start, end, and obstacle
-
-
-        // When reset is clicked kill thread
-        // reset also needs to reset blackboard
-    }
-
-
 }
+
