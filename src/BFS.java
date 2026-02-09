@@ -49,7 +49,7 @@ public class BFS implements Runnable {
         model.markFrontier(start);
 
         while (!openQueue.isEmpty() && running) {
-
+            sleep(300);
             Point currentCell = openQueue.poll();
             model.markVisited(currentCell);
 
