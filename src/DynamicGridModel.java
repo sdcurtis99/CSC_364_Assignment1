@@ -4,10 +4,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
-public class DynamicGridModel extends JPanel implements PropertyChangeListener{
-
-    // The grid represents the logical state of the array
+public class DynamicGridModel extends JPanel implements PropertyChangeListener, MouseListener {    // The grid represents the logical state of the array
     // The labels are responsible for depicting what each cell represents
     private CellType[][] grid;
     private JLabel[][] labels;
@@ -97,6 +97,31 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
         refreshView();
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
     // enum for the different types of cells
     enum CellType {
         EMPTY,
@@ -115,6 +140,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
             for (int c = 0; c < this.cols; c++) {
                 grid[r][c] = CellType.EMPTY;
                 JLabel label = new JLabel();
+                label.addMouseListener(this);
                 label.setOpaque(true);
                 label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 label.setBackground(Color.WHITE);
