@@ -137,14 +137,14 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
         notifyChange();
     }
 
-    public synchronized void markVisitied (Point p) {
+    public synchronized void markVisited (Point p) {
         if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.END) {grid[p.y][p.x] = CellType.VISITED;}
         notifyChange();
     }
 
     public synchronized void markPath(List<Point> path) {
         for(Point p : path) {
-            if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.EMPTY) {grid[p.y][p.x] = CellType.PATH;}
+            if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.END) {grid[p.y][p.x] = CellType.PATH;}
         }
         notifyChange();
     }
