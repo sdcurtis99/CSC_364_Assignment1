@@ -21,6 +21,7 @@ public class MainPanel implements PropertyChangeListener {
 
 
         toolBar = new ToolBar(grid);
+        toolBar.addPropertyChangeListener(this);
 
         gridHouse = new GridHouse();
 
@@ -44,6 +45,7 @@ public class MainPanel implements PropertyChangeListener {
             int newSize = (int) event.getNewValue();
             gridHouse.remove(grid);
             grid = new DynamicGridModel(newSize, newSize);
+            grid.setPreferredSize(new Dimension(400, 400));
             gridHouse.add(grid);
 
             // redo the layout since it has changed then repaint it
