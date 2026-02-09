@@ -32,7 +32,8 @@ public class ToolBar extends JPanel implements ActionListener {
         // Create new thread which create an AStarObject taking Point of start, end, and obstacle
 
 
-        // When reset is clicked
+        // When reset is clicked kill thread
+        // reset also needs to reset blackboard
     }
 
 
