@@ -8,7 +8,7 @@ public class MainPanel {
         frame.setSize(600, 400);
         frame.add(new GridHouse(), BorderLayout.SOUTH);
         frame.add(new ToolBar(), BorderLayout.NORTH);
-        //frame.add(new DynamicGrid(), BorderLayout.CENTER);
+        frame.add(new DynamicGrid(), BorderLayout.CENTER);
 
         frame.setVisible(true);
     }
