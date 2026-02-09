@@ -12,11 +12,11 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
     private CellType[][] grid;
     private JLabel[][] labels;
 
+    private Point start = null;
+    private Point end = null;
     private int rows;
     private int cols;
-    private boolean running = true;
     private boolean paused = false;
-    private boolean finished = false;
 
     public DynamicGridModel(int rows, int cols) {
         this.rows = rows;
@@ -27,6 +27,27 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
         initGrid();
     }
 
+    public synchronized void setStart(int r, int c) {
+        clearCell(CellType.START);
+        start = new Point(c, r);
+        grid[r][c] = CellType.START;
+        notifyChange();
+    }
+
+    public synchronized void setEnd(int r, int c) {
+        clearCell(CellType.END);
+        end = new Point(c, r);
+        grid[r][c] = CellType.END;
+        notifyChange();
+    }
+
+    public synchronized Point getStart() {
+        return start;
+    }
+
+    public synchronized Point getEnd() {
+        return end;
+    }
 
     public synchronized int getRows() {
         return rows;
@@ -34,6 +55,20 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
 
     public synchronized int getCols() {
         return cols;
+    }
+
+    public synchronized void pause() {
+        paused = true;
+    }
+
+    public synchronized void resume() {
+        paused = false;
+        // wakes up all threads???
+        notifyAll();
+    }
+
+    public synchronized boolean isPaused() {
+        return paused;
     }
 
     public synchronized CellType getCell(int r, int c) {
@@ -127,18 +162,6 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
         }
     }
 
-    public synchronized void setStart(int r, int c) {
-        clearCell(CellType.START);
-        grid[r][c] = CellType.START;
-        notifyChange();
-    }
-
-    public synchronized void setEnd(int r, int c) {
-        clearCell(CellType.END);
-        grid[r][c] = CellType.END;
-        notifyChange();
-    }
-
     public synchronized void toggleObstacle(int r, int c) {
         if (grid[r][c] == CellType.EMPTY) {grid[r][c] = CellType.OBSTACLE;}
         else if (grid[r][c] == CellType.OBSTACLE) {grid[r][c] = CellType.EMPTY;}
@@ -181,6 +204,8 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
                 grid[r][c] = CellType.EMPTY;
             }
         }
+        start = null;
+        end =  null;
         notifyChange();
     }
 

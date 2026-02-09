@@ -6,27 +6,72 @@ import java.awt.*;
 
 public class ToolBar extends JPanel implements ActionListener {
 
-    public ToolBar() {
+    private DynamicGridModel grid;
+    private JButton startButton;
+    private JButton resetButton;
+    private JButton pauseButton;
+    private JComboBox<Integer> gridDropDown;
+
+    public ToolBar(DynamicGridModel grid) {
+
+        this.grid = grid;
         JLabel gTitle = new JLabel("Grid Count:");
         Integer[] gridCounts = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100};
-        JComboBox<Integer> gridDropDown = new JComboBox<>(gridCounts);
-        JButton startRadio =  new JButton("Start");
-        JButton resetRadio =  new JButton("Reset");
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(startRadio);
-        buttonGroup.add(resetRadio);
+       gridDropDown = new JComboBox<>(gridCounts);
+
+        startButton = new JButton("Start");
+        resetButton = new JButton("Reset");
+        pauseButton = new JButton("Pause");
+
         add(gTitle);
         add(gridDropDown);
-        add(startRadio);
-        add(resetRadio);
-        startRadio.addActionListener(this);
-        resetRadio.addActionListener(this);
+        add(startButton);
+        add(resetButton);
+        add(pauseButton);
+
+        startButton.addActionListener(this);
+        pauseButton.addActionListener(this);
+        resetButton.addActionListener(this);
         gridDropDown.addActionListener(this);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        System.out.println("temp");
+    public void actionPerformed(ActionEvent event) {
+
+        if (event.getSource() == gridDropDown) {
+            Integer newSize = (Integer) gridDropDown.getSelectedItem();
+            // Tell the rest of the program that a resize was requested
+            firePropertyChange("resize", null, newSize);
+            return;
+        }
+
+        // getActionCommand returns the text for buttons
+        switch (event.getActionCommand()) {
+
+            case "Start":
+                grid.clearSearchMarks();
+                // BFS thread will be started here later
+                //System.out.println("Start pressed");
+                break;
+
+            case "Reset":
+                grid.reset();
+                //System.out.println("Reset pressed");
+                break;
+
+            case "Pause":
+                grid.pause();
+                pauseButton.setText("Resume");
+                //System.out.println("Paused");
+                break;
+
+            case "Resume":
+                grid.resume();
+                pauseButton.setText("Pause");
+                //System.out.println("Resumed");
+                break;
+        }
+    }
 
         // When Start is Clicked
         // Create new thread which create an AStarObject taking Point of start, end, and obstacle
