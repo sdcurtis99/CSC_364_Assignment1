@@ -1,0 +1,8 @@
+Once pathfinding is already running dont allow start to be activated again until it is done
+Path gets overwrote by visited nodes (grid 30), eventually path becomes solid and visited and path stop flipping
+Upon reset pathing algorithm continues to keep searching, but start end, and the current grids that have been marked are cleared
+Dont allow path finding algortihm to run while start and end are null,
+Pause is non-functional
+Sleep should be dyanmic based on grid size so that the speed of which the path is explored is appropiate to the size of the grid
+
+All swing events, Ie Mouse Actions, Buttons, Etc should be threaded for improved performance.
