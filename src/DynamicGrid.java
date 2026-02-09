@@ -3,6 +3,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 
 public class DynamicGrid extends JPanel implements PropertyChangeListener{
 
@@ -103,30 +104,52 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
             }
         }
 
-
-    public void setRunning (boolean state) {
-        this.running = state;
+    private void clearCell(CellType type) {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == type) {
+                    grid[r][c] = CellType.EMPTY;
+                }
+            }
+        }
     }
 
-    public void setPaused (boolean state) {
-        this.paused = state;
+    public synchronized void setStart(int r, int c) {
+        clearCell(CellType.START);
+        grid[r][c] = CellType.START;
+        notifyChange();
     }
 
-    public void setFinished(boolean state) {
-        this.finished = state;
+    public synchronized void setEnd(int r, int c) {
+        clearCell(CellType.END);
+        grid[r][c] = CellType.END;
+        notifyChange();
     }
 
-    public boolean getRunning () {
-        return this.running;
+    public synchronized void toggleObstacle(int r, int c) {
+        if (grid[r][c] == CellType.EMPTY) {grid[r][c] = CellType.OBSTACLE;}
+        else if (grid[r][c] == CellType.OBSTACLE) {grid[r][c] = CellType.EMPTY;}
+        notifyChange();
     }
 
-    public boolean getPaused () {
-        return this.paused;
+    public synchronized void markFrontier(Point p) {
+        if (grid[p.y][p.x] == CellType.EMPTY) {grid[p.y][p.x] = CellType.FRONTIER;}
+        notifyChange();
     }
 
-    public boolean getFinished() {
-        return this.finished;
+    public synchronized void markVisitied (Point p) {
+        if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.END) {grid[p.y][p.x] = CellType.VISITED;}
+        notifyChange();
     }
+
+    public synchronized void markPath(List<Point> path) {
+        for(Point p : path) {
+            if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] !=CellType.EMPTY) {grid[p.y][p.x] = CellType.PATH;}
+        }
+        notifyChange();
+    }
+
+
 
 
 }
