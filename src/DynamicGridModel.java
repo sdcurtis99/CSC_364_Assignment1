@@ -18,6 +18,28 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
     private boolean paused = false;
     private boolean finished = false;
 
+    public DynamicGridModel(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        setLayout(new GridLayout(rows, cols));
+        grid = new CellType[rows][cols];
+        labels = new JLabel[rows][cols];
+        initGrid();
+    }
+
+
+    public synchronized int getRows() {
+        return rows;
+    }
+
+    public synchronized int getCols() {
+        return cols;
+    }
+
+    public synchronized CellType getCell(int r, int c) {
+        return grid[r][c];
+    }
+
     // Let's out Grid alert that something has changed, creates an object that keeps a list of
     // listeners and notifies them when something has changed ie there is new data to get from the blackboard
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -49,15 +71,6 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
         FRONTIER,
         VISITED,
         PATH
-    }
-
-    public DynamicGridModel(int rows, int cols) {
-        this.rows = rows;
-        this.cols = cols;
-        setLayout(new GridLayout(rows, cols));
-        grid = new CellType[rows][cols];
-        labels = new JLabel[rows][cols];
-        initGrid();
     }
 
     private void initGrid() {
@@ -158,9 +171,17 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener{
                 }
             }
         }
+        notifyChange();
     }
 
-
-
+    // Reset the grid
+    public synchronized void reset() {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                grid[r][c] = CellType.EMPTY;
+            }
+        }
+        notifyChange();
+    }
 
 }
