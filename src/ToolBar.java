@@ -53,7 +53,7 @@ public class ToolBar extends JPanel implements ActionListener {
         switch (event.getActionCommand()) {
             case "Start":
                 grid.clearSearchMarks();
-
+                grid.startPathFinding();
                 // BFS thread will be started here later
                 //System.out.println("Start pressed");
                 break;
