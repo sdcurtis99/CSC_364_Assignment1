@@ -113,6 +113,7 @@ public class BFS implements Runnable {
 
         while (true) {
             path.add(0, current);
+            sleep(300);
             if (current.equals(start)) break;
             current = cameFrom[current.y][current.x];
             if (current == null) return new ArrayList<>();
@@ -120,4 +121,12 @@ public class BFS implements Runnable {
 
         return path;
     }
+    private void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
 }
