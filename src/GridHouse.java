@@ -4,6 +4,6 @@ import java.awt.*;
 public class GridHouse extends JPanel {
 
     public GridHouse() {
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
     }
 }

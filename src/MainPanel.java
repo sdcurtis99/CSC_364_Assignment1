@@ -15,16 +15,18 @@ public class MainPanel {
         frame.setLayout(new BorderLayout());
 
         grid = new DynamicGridModel(10, 10);
+        grid.setPreferredSize(new Dimension(400, 400));
+
 
         toolBar = new ToolBar(grid);
 
         gridHouse = new GridHouse();
 
         frame.add(toolBar, BorderLayout.NORTH);
-        frame.add(gridHouse, BorderLayout.SOUTH);
-        gridHouse.add(grid, BorderLayout.CENTER);
+        frame.add(gridHouse, BorderLayout.CENTER);
+        gridHouse.add(grid);
 
-        frame.setSize(800, 600);
+        frame.setSize(800, 800);
         frame.setVisible(true);
     }
 
