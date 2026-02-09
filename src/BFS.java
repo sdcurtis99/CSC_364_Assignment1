@@ -23,23 +23,26 @@ public class BFS implements Runnable {
 
     @Override
     public void run() {
+        try {
+            Point start = model.getStart();
+            Point goal = model.getEnd();
+            int rows = model.getRows();
+            int cols = model.getCols();
 
-        Point start = model.getStart();
-        Point goal = model.getEnd();
-        int rows = model.getRows();
-        int cols = model.getCols();
+            if (start == null || goal == null) {
+                resultPath = new ArrayList<>();
+                return;
+            }
 
-        if (start == null || goal == null) {
-            resultPath = new ArrayList<>();
-            return;
+            model.clearSearchMarks();
+            resultPath = findPath(start, goal, rows, cols);
+
+        } finally {
+            model.finishPathfinding();
         }
-
-        model.clearSearchMarks();
-        resultPath = findPath(start, goal, rows, cols);
     }
 
     public List<Point> findPath(Point start, Point goal, int rows, int cols) {
-
         boolean[][] visited = new boolean[rows][cols];
         Point[][] cameFrom = new Point[rows][cols];
 
@@ -47,9 +50,19 @@ public class BFS implements Runnable {
         openQueue.add(start);
         visited[start.y][start.x] = true;
         model.markFrontier(start);
+        int token = model.getactivesearchtoken();
+
 
         while (!openQueue.isEmpty() && running) {
-            sleep(100);
+            if (token != model.getactivesearchtoken()) {
+                return new ArrayList<>();
+            }
+            if (model.isPaused()) {
+                sleep(20);
+                continue;
+            }
+
+            sleep(model.delayforgridsize());
             Point currentCell = openQueue.poll();
             model.markVisited(currentCell);
 
@@ -113,7 +126,7 @@ public class BFS implements Runnable {
 
         while (true) {
             path.add(0, current);
-            sleep(100);
+            sleep(model.delayforgridsize());
             if (current.equals(start)) break;
             current = cameFrom[current.y][current.x];
             if (current == null) return new ArrayList<>();

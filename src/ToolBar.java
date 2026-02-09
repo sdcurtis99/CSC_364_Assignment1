@@ -52,6 +52,7 @@ public class ToolBar extends JPanel implements ActionListener {
         // getActionCommand returns the text for buttons
         switch (event.getActionCommand()) {
             case "Start":
+                if (grid.isPathfindingRunning()) return;
                 grid.clearSearchMarks();
                 grid.startPathFinding();
                 // BFS thread will be started here later

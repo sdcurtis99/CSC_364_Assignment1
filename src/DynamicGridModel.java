@@ -18,6 +18,10 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     private int rows;
     private int cols;
     private boolean paused = false;
+    private int activeSearchToken = 0;
+    private boolean pathfindingrunning = false;
+
+
 
     public DynamicGridModel(int rows, int cols) {
         this.rows = rows;
@@ -65,9 +69,15 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
 
     public synchronized void resume() {
         paused = false;
-        // wakes up all threads???
         notifyAll();
     }
+    public synchronized int getactivesearchtoken(){
+        return activeSearchToken;
+    }
+    public synchronized void cancelsearchtoken(){
+         activeSearchToken++;
+    }
+
 
     public synchronized boolean isPaused() {
         return paused;
@@ -75,6 +85,19 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
 
     public synchronized CellType getCell(int r, int c) {
         return grid[r][c];
+    }
+    public synchronized boolean isPathfindingRunning() {
+        return pathfindingrunning;
+    }
+
+    public synchronized boolean tryStartPathfinding() {
+        if (pathfindingrunning) return false;
+        pathfindingrunning = true;
+        return true;
+    }
+
+    public synchronized void finishPathfinding() {
+        pathfindingrunning = false;
     }
 
 
@@ -99,6 +122,8 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     private void notifyChange() {
         pcs.firePropertyChange("grid", null, null);
         refreshView();
+        SwingUtilities.invokeLater(this::refreshView);
+
     }
 
 
@@ -279,6 +304,10 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     }
 
     public void startPathFinding () {
+        if (start == null || end == null){
+            return;
+        }
+        if (!tryStartPathfinding()) return;
         BFS bfsPath = new BFS(this);
         Thread bfsThread = new Thread(bfsPath);
         bfsThread.start();
@@ -298,6 +327,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
 
     // Reset the grid
     public synchronized void reset() {
+        cancelsearchtoken();
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 grid[r][c] = CellType.EMPTY;
@@ -306,6 +336,12 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         start = null;
         end = null;
         notifyChange();
+    }
+
+    public int delayforgridsize(){
+        int cells = rows * cols;
+        double delay = 1000.0 / Math.sqrt(cells);
+        return Math.max(5, (int) delay);
     }
 
 }
