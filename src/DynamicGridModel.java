@@ -229,6 +229,11 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         notifyChange();
     }
 
+    public void startPathFinding () {
+        Thread bfs = new Thread();
+        bfs.start();
+    }
+
     // Clear the algorithms setup, leave users choices in palace
     public synchronized void clearSearchMarks() {
         for (int r = 0; r < rows; r++) {
