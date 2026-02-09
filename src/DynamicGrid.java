@@ -17,14 +17,26 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
     private boolean paused = false;
     private boolean finished = false;
 
+    // Let's out Grid alert that something has changed, creates an object that keeps a list of
+    // listeners and notifies them when something has changed ie there is new data to get from the blackboard
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+
+    // Whenever something changes notify the listeners
     public void addPropertyChangeListener(PropertyChangeListener listner) {
         pcs.addPropertyChangeListener(listner);
     }
 
+    // Method that is called to begin the chain of events of alerting the listerns
+    // Will get called in the grids logic updates
     private void notifyChange() {
         pcs.firePropertyChange("grid", null, null);
+    }
+
+    // When there is a change we must refresh our grid.
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        refreshView();
     }
 
     // enum for the different types of cells
@@ -91,10 +103,6 @@ public class DynamicGrid extends JPanel implements PropertyChangeListener{
             }
         }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-
-    }
 
     public void setRunning (boolean state) {
         this.running = state;
