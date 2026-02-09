@@ -99,7 +99,23 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        JLabel label = (JLabel) e.getSource();
+        int r = (int) label.getClientProperty("row");
+        int c = (int) label.getClientProperty("col");
+        switch(e.getClickCount()) {
+            case 1:
+                setStart(r, c);
+                System.out.println("1");
+                break;
+            case 2:
+                setEnd(r, c);
+                System.out.println("2");
+                break;
+            case 3:
+                toggleObstacle(r, c);
+                System.out.println("3");
+                break;
+        }
     }
 
     @Override
@@ -140,6 +156,8 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
             for (int c = 0; c < this.cols; c++) {
                 grid[r][c] = CellType.EMPTY;
                 JLabel label = new JLabel();
+                label.putClientProperty("row", r);
+                label.putClientProperty("col", c);
                 label.addMouseListener(this);
                 label.setOpaque(true);
                 label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
