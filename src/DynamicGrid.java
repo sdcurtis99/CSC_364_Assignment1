@@ -4,14 +4,31 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class DynamicGrid extends JPanel implements PropertyChangeListener{
 
-    private JLabel cells[][] =  new JLabel[10][10];
+    private JLabel cells[][];
+    private int rows;
+    private int cols;
     private boolean running = true;
     private boolean paused = false;
     private boolean finished = false;
 
+    enum CellType {
+        EMPTY,
+        START,
+        END,
+        OBSTACLE,
+        FRONTIER,
+        VISITED,
+        PATH
+    }
+
+
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+    private void notifyChange() {pcs.firePropertyChange("grid", null, null);}
 
     // Bind this callback function to input from JComboBox changes number of grids in GridHouse
     public void setGridSize(int rows, int columns) {
