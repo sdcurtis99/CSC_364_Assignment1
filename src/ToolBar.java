@@ -15,10 +15,13 @@ public class ToolBar extends JPanel implements ActionListener {
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(startRadio);
         buttonGroup.add(resetRadio);
+        add(gTitle);
+        add(gridDropDown);
         add(startRadio);
         add(resetRadio);
         startRadio.addActionListener(this);
         resetRadio.addActionListener(this);
+        gridDropDown.addActionListener(this);
     }
 
     @Override
