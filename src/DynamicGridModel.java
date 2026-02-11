@@ -221,7 +221,42 @@ public class DynamicGridModel extends JPanel implements MouseListener {
         JLabel label = (JLabel) e.getSource();
         int r = (int) label.getClientProperty("row");
         int c = (int) label.getClientProperty("col");
-        toggleObstacle(r, c);
+
+        synchronized (this) {
+
+            CellType cell = grid[r][c];
+
+            // If clicking START again -> clear it
+            if (cell == CellType.START) {
+                grid[r][c] = CellType.EMPTY;
+                start = null;
+                notifyChange();
+                return;
+            }
+
+            // If clicking END again -> clear it
+            if (cell == CellType.END) {
+                grid[r][c] = CellType.EMPTY;
+                end = null;
+                notifyChange();
+                return;
+            }
+
+            // First click sets START
+            if (start == null) {
+                setStart(r, c);   // uses synchronized method
+                return;
+            }
+
+            // Second click sets END
+            if (end == null) {
+                setEnd(r, c);     // uses synchronized method
+                return;
+            }
+
+            // Otherwise toggle obstacle
+            toggleObstacle(r, c);   // already synchronized
+        }
     }
 
     @Override public void mousePressed(MouseEvent e) {}
