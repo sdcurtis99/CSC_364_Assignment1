@@ -47,19 +47,19 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         notifyChange();
     }
 
-    public synchronized Point getStart() {
+    public Point getStart() {
         return start;
     }
 
-    public synchronized Point getEnd() {
+    public Point getEnd() {
         return end;
     }
 
-    public synchronized int getRows() {
+    public int getRows() {
         return rows;
     }
 
-    public synchronized int getCols() {
+    public int getCols() {
         return cols;
     }
 
@@ -121,7 +121,6 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     // Will get called in the grids logic updates
     private void notifyChange() {
         pcs.firePropertyChange("grid", null, null);
-        refreshView();
         SwingUtilities.invokeLater(this::refreshView);
 
     }
