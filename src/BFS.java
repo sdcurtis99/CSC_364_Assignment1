@@ -50,11 +50,11 @@ public class BFS implements Runnable {
         openQueue.add(start);
         visited[start.y][start.x] = true;
         model.markFrontier(start);
-        int token = model.getactivesearchtoken();
+        int token = model.getActiveSearchToken();
 
 
         while (!openQueue.isEmpty() && running) {
-            if (token != model.getactivesearchtoken()) {
+            if (token != model.getActiveSearchToken()) {
                 return new ArrayList<>();
             }
             if (model.isPaused()) {
