@@ -10,6 +10,7 @@ public class MainPanel implements PropertyChangeListener {
     private DynamicGridModel grid;
     private ToolBar toolBar;
 
+
     public MainPanel() {
 
         frame = new JFrame("Concurrent Grid Pathfinder");

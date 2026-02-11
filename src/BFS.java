@@ -8,8 +8,10 @@ public class BFS implements Runnable {
     private DynamicGridModel model;
     private List<Point> resultPath;
     private volatile boolean running = true;
+    private int token;
 
-    public BFS(DynamicGridModel model) {
+    public BFS(DynamicGridModel model, int token) {
+        this.token = token;
         this.model = model;
     }
 
@@ -49,26 +51,24 @@ public class BFS implements Runnable {
         Queue<Point> openQueue = new LinkedList<>();
         openQueue.add(start);
         visited[start.y][start.x] = true;
-        model.markFrontier(start);
-        int token = model.getActiveSearchToken();
-
+        model.markFrontier(start, token);
 
         while (!openQueue.isEmpty() && running) {
             if (token != model.getActiveSearchToken()) {
                 return new ArrayList<>();
             }
             if (model.isPaused()) {
-                sleep(20);
+                sleep(1);
                 continue;
             }
 
             sleep(model.delayforgridsize());
             Point currentCell = openQueue.poll();
-            model.markVisited(currentCell);
+            model.markVisited(currentCell, token);
 
             if (currentCell.x == goal.x && currentCell.y == goal.y) {
                 List<Point> path = buildPath(cameFrom, start, goal);
-                model.markPath(path);
+                model.markPath(path, token);
                 return path;
             }
 
@@ -80,7 +80,7 @@ public class BFS implements Runnable {
                 cameFrom[row - 1][col] = currentCell;
                 Point next = new Point(col, row - 1);
                 openQueue.add(next);
-                model.markFrontier(next);
+                model.markFrontier(next, token);
             }
 
             if (isValidCell(row + 1, col, visited, rows, cols)) {
@@ -88,7 +88,7 @@ public class BFS implements Runnable {
                 cameFrom[row + 1][col] = currentCell;
                 Point next = new Point(col, row + 1);
                 openQueue.add(next);
-                model.markFrontier(next);
+                model.markFrontier(next, token);
             }
 
             if (isValidCell(row, col - 1, visited, rows, cols)) {
@@ -96,7 +96,7 @@ public class BFS implements Runnable {
                 cameFrom[row][col - 1] = currentCell;
                 Point next = new Point(col - 1, row);
                 openQueue.add(next);
-                model.markFrontier(next);
+                model.markFrontier(next,token);
             }
 
             if (isValidCell(row, col + 1, visited, rows, cols)) {
@@ -104,7 +104,7 @@ public class BFS implements Runnable {
                 cameFrom[row][col + 1] = currentCell;
                 Point next = new Point(col + 1, row);
                 openQueue.add(next);
-                model.markFrontier(next);
+                model.markFrontier(next, token);
             }
         }
 
