@@ -3,7 +3,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -71,7 +70,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         paused = false;
         notifyAll();
     }
-    public synchronized int getActiveSearchToken(){
+    public int getActiveSearchToken(){
         return activeSearchToken;
     }
     public synchronized void cancelsearchtoken(){
@@ -83,7 +82,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         return paused;
     }
 
-    public synchronized CellType getCell(int r, int c) {
+    public CellType getCell(int r, int c) {
         return grid[r][c];
     }
     public synchronized boolean isPathfindingRunning() {
@@ -121,7 +120,6 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     // Will get called in the grids logic updates
     private void notifyChange() {
         pcs.firePropertyChange("grid", null, null);
-        refreshView();
         SwingUtilities.invokeLater(this::refreshView);
 
     }
@@ -280,7 +278,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         notifyChange();
     }
 
-    public synchronized void markFrontier(Point p, int token) {
+    public void markFrontier(Point p, int token) {
         if (token != activeSearchToken) return;
         if (grid[p.y][p.x] == CellType.EMPTY) {
             grid[p.y][p.x] = CellType.FRONTIER;
@@ -288,7 +286,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         notifyChange();
     }
 
-    public synchronized void markVisited(Point p, int token) {
+    public void markVisited(Point p, int token) {
         if (token != activeSearchToken) return;
         if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] != CellType.END) {
             grid[p.y][p.x] = CellType.VISITED;
@@ -296,7 +294,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
         notifyChange();
     }
 
-    public synchronized void markPath(List<Point> path, int token) {
+    public void markPath(List<Point> path, int token) {
         if (token != activeSearchToken) return;
         for (Point p : path) {
             if (grid[p.y][p.x] != CellType.START && grid[p.y][p.x] != CellType.END) {
@@ -318,7 +316,7 @@ public class DynamicGridModel extends JPanel implements PropertyChangeListener, 
     }
 
     // Clear the algorithms setup, leave users choices in palace
-    public synchronized void clearSearchMarks() {
+    public void clearSearchMarks() {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (grid[r][c] == CellType.FRONTIER || grid[r][c] == CellType.PATH || grid[r][c] == CellType.VISITED) {
